@@ -1,0 +1,111 @@
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model company {
+    id                Int       @id @default(autoincrement())
+    company_tel       String?
+    president_name_e  String?
+    internet_address  String?
+    lawsuit_eadr      String?
+    company_address   String?
+    chairman_name_e   String?
+    english_name      String?
+    chairman_name     String?
+    mar_kind          String?
+    lawsuit_cadr      String?
+    lawsuit_tel       String?
+    capital_amt       String?
+    company_id        String?   @unique // 保持唯一
+    spokenman         String?
+    ename             String?
+    invo_no           String?
+    english_abbr_name String?
+    establish_date    String?
+    stk_assign_org    String?
+    lawsuit_cname     String?
+    psb_risk          String?
+    fin_code          String?
+    spokenman_e       String?
+    stk_assign_tel    String?
+    name              String?
+    gdr_num           String?
+    president_name    String?
+    main_business3    String?
+    lawsuit_ename     String?
+    main_business2    String?
+    company_name      String?
+    code              String?
+    psb_flag          String?
+    company_abbr_name String?
+    main_business4    String?
+    cur_id            String?
+    english_address_2 String?
+    main_business1    String?
+    gdr_num_2         String?
+    english_address_1 String?
+    listing_date      String?
+    finance           finance[] // 可以有多個 finance 記錄
+
+    @@unique([company_id, company_name])
+    @@map("company")
+}
+
+model finance {
+    id        Int     @id @default(autoincrement())
+    year      Int
+    season    Int
+    category  String?
+    companyid String
+
+    aaaa  BigInt?
+    bbbb  BigInt?
+    cccc  BigInt?
+    x11XX BigInt? @map("11XX")
+    x15XX BigInt? @map("15XX")
+    x1XXX BigInt? @map("1XXX")
+    x21XX BigInt? @map("21XX")
+    x25XX BigInt? @map("25XX")
+    x2XXX BigInt? @map("2XXX")
+    x3998 BigInt? @map("3998")
+    x3999 BigInt? @map("3999")
+    x3XXX BigInt? @map("3XXX")
+    x3100 BigInt? @map("3100")
+    x3110 BigInt? @map("3110")
+    x31XX BigInt? @map("31XX")
+    x3200 BigInt? @map("3200")
+    x3300 BigInt? @map("3300")
+    x3400 BigInt? @map("3400")
+    x4000 BigInt? @map("4000")
+    x5000 BigInt? @map("5000")
+    x5950 BigInt? @map("5950")
+    x6000 BigInt? @map("6000")
+    x6900 BigInt? @map("6900")
+    x7000 BigInt? @map("7000")
+    x9750 BigInt? @map("9750")
+    x7900 BigInt? @map("7900")
+    x7950 BigInt? @map("7950")
+    x8000 BigInt? @map("8000")
+    x8200 BigInt? @map("8200")
+    x8300 BigInt? @map("8300")
+    x8500 BigInt? @map("8500")
+    AAAA  BigInt?
+    BBBB  BigInt?
+    CCCC  BigInt?
+    x3500 BigInt? @map("3500")
+    x36XX BigInt? @map("36XX")
+    x6500 BigInt? @map("6500")
+    x8100 BigInt? @map("8100")
+    x399A BigInt? @map("399A")
+    x399B BigInt? @map("399B")
+    x3120 BigInt? @map("3120")
+
+    company company @relation(fields: [companyid], references: [company_id])
+
+    @@unique([companyid, year, season]) // 確保 (companyid, year, season) 唯一
+}
