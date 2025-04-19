@@ -1,56 +1,101 @@
-import { Link } from "@heroui/link";
-import { Snippet } from "@heroui/snippet";
-import { Code } from "@heroui/code";
-import { button as buttonStyles } from "@heroui/theme";
+import TPEXTable from "@/components/tpextable";
 
-import { siteConfig } from "@/config/site";
-import { title, subtitle } from "@/components/primitives";
-import { GithubIcon } from "@/components/icons";
-
-export default function Home() {
-  return (
-    <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-      <div className="inline-block max-w-xl text-center justify-center">
-        <span className={title()}>Make&nbsp;</span>
-        <span className={title({ color: "violet" })}>beautiful&nbsp;</span>
-        <br />
-        <span className={title()}>
-          websites regardless of your design experience.
-        </span>
-        <div className={subtitle({ class: "mt-4" })}>
-          Beautiful, fast and modern React UI library.
-        </div>
-      </div>
-
-      <div className="flex gap-3">
-        <Link
-          isExternal
-          className={buttonStyles({
-            color: "primary",
-            radius: "full",
-            variant: "shadow",
-          })}
-          href={siteConfig.links.docs}
-        >
-          Documentation
-        </Link>
-        <Link
-          isExternal
-          className={buttonStyles({ variant: "bordered", radius: "full" })}
-          href={siteConfig.links.github}
-        >
-          <GithubIcon size={20} />
-          GitHub
-        </Link>
-      </div>
-
-      <div className="mt-8">
-        <Snippet hideCopyButton hideSymbol variant="bordered">
-          <span>
-            Get started by editing <Code color="primary">app/page.tsx</Code>
-          </span>
-        </Snippet>
-      </div>
-    </section>
-  );
+export default async function TPEX() {
+  return <TPEXTable />;
 }
+
+export type FinancialReport = {
+  id: number;
+  year: number;
+  season: number;
+  category: string;
+  // company: Company;
+  companyid: string;
+  aaaa: string | null;
+  bbbb: string | null;
+  cccc: string | null;
+  x11XX: string | null;
+  x15XX: string | null;
+  x1XXX: string | null;
+  x21XX: string | null;
+  x25XX: string | null;
+  x2XXX: string | null;
+  x3998: string | null;
+  x3999: string | null;
+  x3XXX: string | null;
+  x3100: string | null;
+  x3110: string | null;
+  x31XX: string | null;
+  x3200: string | null;
+  x3300: string | null;
+  x3400: string | null;
+  x4000: string | null;
+  x5000: string | null;
+  x5950: string | null;
+  x6000: string | null;
+  x6900: string | null;
+  x7000: string | null;
+  x9750: string | null;
+  x7900: string | null;
+  x7950: string | null;
+  x8000: string | null;
+  x8200: string | null;
+  x8300: string | null;
+  x8500: string | null;
+  AAAA: string | null;
+  BBBB: string | null;
+  CCCC: string | null;
+  x3500: string | null;
+  x36XX: string | null;
+  x6500: string | null;
+  x8100: string | null;
+  x399A: string | null;
+  x399B: string | null;
+  x3120: string | null;
+};
+
+export type Company = {
+  id: number;
+  company_tel: string;
+  president_name_e: string;
+  internet_address: string;
+  lawsuit_eadr: string;
+  company_address: string;
+  chairman_name_e: string;
+  english_name: string;
+  chairman_name: string;
+  mar_kind: string;
+  lawsuit_cadr: string;
+  lawsuit_tel: string;
+  capital_amt: string;
+  company_id: string;
+  spokenman: string;
+  ename: string;
+  invo_no: string;
+  english_abbr_name: string;
+  establish_date: string;
+  stk_assign_org: string;
+  lawsuit_cname: string;
+  psb_risk: string;
+  fin_code: string;
+  spokenman_e: string;
+  stk_assign_tel: string;
+  name: string;
+  gdr_num: string;
+  president_name: string;
+  main_business3: string;
+  lawsuit_ename: string;
+  main_business2: string;
+  company_name: string;
+  code: string;
+  psb_flag: string;
+  company_abbr_name: string;
+  main_business4: string;
+  cur_id: string;
+  english_address_2: string;
+  main_business1: string;
+  gdr_num_2: string;
+  english_address_1: string;
+  listing_date: string;
+  finance: FinancialReport[];
+};

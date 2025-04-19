@@ -9,28 +9,15 @@ export async function GET(req: NextRequest) {
   const skip = (page - 1) * limit;
 
   try {
-    const [items, total] = await Promise.all([
-      prisma.finance.findMany({
-        skip,
-        take: limit,
-        include: {
-          company: true
-        }
-      }),
-      prisma.finance.count(),
-    ]);
+    const companies = await prisma.company.findMany({
+      include: {
+        finance: true
+      }
+    })
 
-    const serialized = replaceBigInt(items);
+    const serialized = replaceBigInt(companies);
 
-    return NextResponse.json({
-      data: serialized,
-      meta: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      },
-    });
+    return NextResponse.json(serialized);
   } catch (e) {
     return NextResponse.json(
       { error: "Internal Server Error" },
