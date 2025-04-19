@@ -22,6 +22,7 @@ import {
   DrawerHeader,
   DrawerBody,
   DrawerFooter,
+  TableColumnProps,
 } from "@heroui/react";
 import { useEffect, useMemo, useState } from "react";
 
@@ -76,7 +77,9 @@ const category = [
   "生活健康",
 ];
 
-const columns = [
+type Column = { name: string; uid: string };
+
+const columns: Column[] = [
   { name: "公司代號", uid: "company_id" },
   { name: "公司名稱", uid: "company_name" },
   { name: "產業別", uid: "name" },
@@ -91,7 +94,11 @@ const financeColumns = [
   { name: "本期淨利", key: "x8200" },
 ];
 
-export const DrawerWithTable = ({ company }: { company: Company }) => {
+export const DrawerWithTable = ({
+  company,
+}: {
+  company: Company | undefined;
+}) => {
   const drawer: React.ReactNode = (
     <DrawerContent>
       <DrawerHeader>{company?.company_name} 的公司資訊</DrawerHeader>
@@ -99,35 +106,39 @@ export const DrawerWithTable = ({ company }: { company: Company }) => {
         <Table className="text-right">
           <TableHeader>
             <TableColumn key="item">項目</TableColumn>
-            {company.finance.map((finance) => (
-              <TableColumn
-                key={`${finance.year}-${finance.season}`}
-                align="center"
-              >
-                {finance.year} Q{finance.season}
-              </TableColumn>
-            ))}
+            <>
+              {company?.finance.map((finance) => (
+                <TableColumn
+                  key={`${finance.year}-${finance.season}`}
+                  align="center"
+                >
+                  {finance.year} Q{finance.season}
+                </TableColumn>
+              ))}
+            </>
           </TableHeader>
           <TableBody>
             {financeColumns.map((col) => (
               <TableRow key={col.key} className=" text-right">
                 <TableCell>{col.name}</TableCell>
-                {company.finance.map((season) => {
-                  const raw = season[col.key as keyof typeof season];
-                  const num = Number(raw);
-                  const value = !isNaN(num)
-                    ? num.toLocaleString()
-                    : (raw ?? "-");
+                <>
+                  {company?.finance.map((season) => {
+                    const raw = season[col.key as keyof typeof season];
+                    const num = Number(raw);
+                    const value = !isNaN(num)
+                      ? num.toLocaleString()
+                      : (raw ?? "-");
 
-                  return (
-                    <TableCell
-                      key={`${season.year}-${season.season}-${col.key}`}
-                      className=" text-right"
-                    >
-                      {value}
-                    </TableCell>
-                  );
-                })}
+                    return (
+                      <TableCell
+                        key={`${season.year}-${season.season}-${col.key}`}
+                        className=" text-right"
+                      >
+                        {value}
+                      </TableCell>
+                    );
+                  })}
+                </>
               </TableRow>
             ))}
           </TableBody>
@@ -305,17 +316,24 @@ export default function TPEXTable() {
           onSortChange={setSortDescriptor}
         >
           <TableHeader columns={columns}>
-            {(col) =>
-              visibleColumnSet.has(col.uid) && (
-                <TableColumn
-                  key={col.uid}
-                  allowsSorting={col.uid !== "actions"}
-                  className={col.uid === "actions" ? "sticky right-0 z-10" : ""}
-                >
-                  {col.name}
-                </TableColumn>
-              )
-            }
+            <>
+              {columns.map((col) => {
+                if (visibleColumnSet.has(col.uid)) {
+                  return (
+                    <TableColumn
+                      key={col.uid}
+                      allowsSorting={col.uid !== "actions"}
+                      className={
+                        col.uid === "actions" ? "sticky right-0 z-10" : ""
+                      }
+                    >
+                      {col.name}
+                    </TableColumn>
+                  );
+                }
+                return null; // 當 `visibleColumnSet` 中不包含該 `uid` 時，不渲染該列
+              })}
+            </>
           </TableHeader>
           <TableBody>
             {dataStatus === DataStatus.LOADING ? (
@@ -359,7 +377,7 @@ export default function TPEXTable() {
 
                     return (
                       <TableCell key={colKey}>
-                        {company[colKey as keyof Company]}
+                        <>{company[colKey as keyof Company]}</>
                       </TableCell>
                     );
                   })}
