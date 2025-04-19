@@ -84,17 +84,53 @@ const columns = [
   { name: "詳細", uid: "actions" },
 ];
 
-const seasons = ["Q1", "Q2", "Q3", "Q4"];
+const financeColumns = [
+  { name: "營業收入", key: "x4000" },
+  { name: "營業毛利淨額", key: "x5950" },
+  { name: "稅前淨利", key: "x7900" },
+  { name: "本期淨利", key: "x8200" },
+];
 
-export const DrawerWithTable = ({ company }: {
-  company: Company;
-}) => {
+export const DrawerWithTable = ({ company }: { company: Company }) => {
   const drawer: React.ReactNode = (
     <DrawerContent>
-      <DrawerHeader>{company.name} 的公司資訊</DrawerHeader>
+      <DrawerHeader>{company?.company_name} 的公司資訊</DrawerHeader>
       <DrawerBody>
-        <Table>
+        <Table className="text-right">
+          <TableHeader>
+            <TableColumn key="item">項目</TableColumn>
+            {company.finance.map((finance) => (
+              <TableColumn
+                key={`${finance.year}-${finance.season}`}
+                align="center"
+              >
+                {finance.year} Q{finance.season}
+              </TableColumn>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {financeColumns.map((col) => (
+              <TableRow key={col.key} className=" text-right">
+                <TableCell>{col.name}</TableCell>
+                {company.finance.map((season) => {
+                  const raw = season[col.key as keyof typeof season];
+                  const num = Number(raw);
+                  const value = !isNaN(num)
+                    ? num.toLocaleString()
+                    : (raw ?? "-");
 
+                  return (
+                    <TableCell
+                      key={`${season.year}-${season.season}-${col.key}`}
+                      className=" text-right"
+                    >
+                      {value}
+                    </TableCell>
+                  );
+                })}
+              </TableRow>
+            ))}
+          </TableBody>
         </Table>
       </DrawerBody>
       <DrawerFooter>
@@ -137,7 +173,7 @@ export default function TPEXTable() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`/api/fiances`, { cache: "no-store" });
+        const res = await fetch(`/fiances.json`);
         const json = await res.json();
 
         setCompanies(json);
@@ -152,9 +188,10 @@ export default function TPEXTable() {
 
   const filteredItems = useMemo(() => {
     return companies.filter((c) => {
-      const matchKeyword = c.company_name
-        .toLowerCase()
-        .includes(searchKeyword.toLowerCase());
+      const matchKeyword =
+        c.company_name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+        c.invo_no.includes(searchKeyword) ||
+        c.company_id.includes(searchKeyword);
 
       const matchCategory = categoryFilter ? c.name === categoryFilter : true;
 
@@ -200,27 +237,31 @@ export default function TPEXTable() {
         <h1 className="text-2xl font-bold">財報</h1>
         <div className="flex gap-2">
           <Input
-            placeholder="Search 公司名稱"
+            placeholder="Search"
             value={searchKeyword}
             onChange={(e) => setSearchKeyword(e.target.value)}
           />
-          {/* 產業別選單 */}
-          <Dropdown>
-            <DropdownTrigger>
-              <Button>{categoryFilter ?? "選擇產業別"}</Button>
-            </DropdownTrigger>
-            <DropdownMenu
-              onAction={(key) =>
-                setCategoryFilter((prev) => (prev === key ? null : String(key)))
-              }
-              selectionMode="single"
-              selectedKeys={categoryFilter ? [categoryFilter] : []}
-            >
-              {category.map((cat) => (
-                <DropdownItem key={cat}>{cat}</DropdownItem>
-              ))}
-            </DropdownMenu>
-          </Dropdown>
+          <div>
+            {/* 產業別選單 */}
+            <Dropdown>
+              <DropdownTrigger>
+                <Button>{categoryFilter ?? "選擇產業別"}</Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                onAction={(key) =>
+                  setCategoryFilter((prev) =>
+                    prev === key ? null : String(key)
+                  )
+                }
+                selectionMode="single"
+                selectedKeys={categoryFilter ? [categoryFilter] : []}
+              >
+                {category.map((cat) => (
+                  <DropdownItem key={cat}>{cat}</DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+          </div>
 
           {/* 欄位顯示 */}
           <Dropdown>
@@ -305,7 +346,10 @@ export default function TPEXTable() {
                           <Button
                             size="sm"
                             color="primary"
-                            onPress={() => setDrawerOpen(true)}
+                            onPress={() => {
+                              setDrawerOpen(true);
+                              setDrawerCompany(company);
+                            }}
                           >
                             明細
                           </Button>
@@ -326,7 +370,7 @@ export default function TPEXTable() {
         </Table>
       </div>
       <div>
-        <Drawer isOpen={drawerOpen} onOpenChange={setDrawerOpen}>
+        <Drawer isOpen={drawerOpen} onOpenChange={setDrawerOpen} size="xl">
           <DrawerWithTable company={selectDrawerCompany} />
         </Drawer>
       </div>
