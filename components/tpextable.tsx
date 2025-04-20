@@ -98,8 +98,10 @@ const financeHeaderColumns = [{ name: "項目", uid: "item" }];
 
 export const DrawerWithTable = ({
   company,
+  onPressClose,
 }: {
   company: Company | undefined;
+  onPressClose: () => void;
 }) => {
   if (!company) return null;
 
@@ -154,7 +156,7 @@ export const DrawerWithTable = ({
         </Table>
       </DrawerBody>
       <DrawerFooter>
-        <Button>確定</Button>
+        <Button onPress={() => onPressClose()}>確定</Button>
       </DrawerFooter>
     </DrawerContent>
   );
@@ -398,7 +400,10 @@ export default function TPEXTable() {
       </div>
       <div>
         <Drawer isOpen={drawerOpen} onOpenChange={setDrawerOpen} size="xl">
-          <DrawerWithTable company={selectDrawerCompany} />
+          <DrawerWithTable
+            company={selectDrawerCompany}
+            onPressClose={() => setDrawerOpen(false)}
+          />
         </Drawer>
       </div>
       <div className="flex justify-between items-center mt-4">
