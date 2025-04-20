@@ -110,9 +110,9 @@ export const DrawerWithTable = ({
         <Table className="text-right">
           <TableHeader>
             {[
-              <TableColumn key="item">項目</TableColumn>,
+              <TableColumn key="item1">項目</TableColumn>,
               ...(company.finance?.map((finance) => (
-                <TableColumn key={finance.season}>
+                <TableColumn key={`${finance.year}-${finance.season}`}>
                   {finance.year} Q{finance.season}
                 </TableColumn>
               )) ?? []),
@@ -123,7 +123,7 @@ export const DrawerWithTable = ({
               financeColumns.map((col) => (
                 <TableRow key={col.key} className="text-right">
                   {[
-                    <TableCell>{col.name}</TableCell>,
+                    <TableCell key={col.name}>{col.name}</TableCell>,
                     ...company.finance.map((season) => {
                       const raw = season[col.key as keyof typeof season];
                       const num = Number(raw);
@@ -251,7 +251,7 @@ export default function TPEXTable() {
 
   return (
     <div>
-      <div className="mb-4 flex justify-between items-center font-mono text-sm">
+      <div className="mb-4 flex justify-between items-center font-mono text-md">
         <h1 className="text-2xl font-bold">財報</h1>
         <div className="flex gap-2">
           <Input
@@ -266,6 +266,7 @@ export default function TPEXTable() {
                 <Button>{categoryFilter ?? "選擇產業別"}</Button>
               </DropdownTrigger>
               <DropdownMenu
+                className="max-h-[50vh] overflow-y-auto"
                 onAction={(key) =>
                   setCategoryFilter((prev) =>
                     prev === key ? null : String(key)
@@ -334,7 +335,7 @@ export default function TPEXTable() {
                         col.uid === "actions" ? "sticky right-0 z-10" : ""
                       }
                     >
-                      {col.name}
+                      <span className="text-md">{col.name}</span>
                     </TableColumn>
                   );
                 }
@@ -363,8 +364,8 @@ export default function TPEXTable() {
                 </TableCell>
               </TableRow>
             ) : (
-              paginatedData.map((company, i) => (
-                <TableRow key={i}>
+              paginatedData.map((company) => (
+                <TableRow key={company.company_id}>
                   {[...visibleColumnSet].map((colKey) => {
                     if (colKey === "actions") {
                       return (
