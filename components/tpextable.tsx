@@ -94,6 +94,8 @@ const financeColumns = [
   { name: "本期淨利", key: "x8200" },
 ];
 
+const financeHeaderColumns = [{ name: "項目", uid: "item" }];
+
 export const DrawerWithTable = ({
   company,
 }: {
@@ -109,23 +111,20 @@ export const DrawerWithTable = ({
           <TableHeader>
             {[
               <TableColumn key="item">項目</TableColumn>,
-              ...company.finance.map((finance) => (
-                <TableColumn
-                  key={`${finance.year}-${finance.season}`}
-                  align="center"
-                >
+              ...(company.finance?.map((finance) => (
+                <TableColumn key={finance.season}>
                   {finance.year} Q{finance.season}
                 </TableColumn>
-              )),
+              )) ?? []),
             ]}
           </TableHeader>
           <TableBody>
-            {company?.finance ? (
+            {company?.finance && company.finance.length > 0 ? (
               financeColumns.map((col) => (
                 <TableRow key={col.key} className="text-right">
-                  <>
-                    <TableCell>{col.name}</TableCell>
-                    {company.finance.map((season) => {
+                  {[
+                    <TableCell>{col.name}</TableCell>,
+                    ...company.finance.map((season) => {
                       const raw = season[col.key as keyof typeof season];
                       const num = Number(raw);
                       const value = !isNaN(num)
@@ -140,13 +139,15 @@ export const DrawerWithTable = ({
                           {value}
                         </TableCell>
                       );
-                    })}
-                  </>
+                    }),
+                  ]}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={999}>尚無資料</TableCell>
+                <TableCell colSpan={company.finance?.length + 1}>
+                  尚無資料
+                </TableCell>
               </TableRow>
             )}
           </TableBody>
@@ -337,6 +338,7 @@ export default function TPEXTable() {
                     </TableColumn>
                   );
                 }
+
                 return null; // 當 `visibleColumnSet` 中不包含該 `uid` 時，不渲染該列
               })}
             </>
